@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ultimate Productivity App</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.tabs button{
+padding:10px;
+margin:5px;
+border:none;
+border-radius:6px;
+background:#334155;
+color:white;
+cursor:pointer;
+}
+
+.tabs button.active{
+background:#22c55e;
+}
+
+.section{
+display:none;
+background:#1e293b;
+padding:20px;
+margin-top:10px;
+border-radius:10px;
+}
+
+input{
+padding:10px;
+border:none;
+border-radius:6px;
+margin-top:10px;
+}
+
+button.action{
+margin-top:10px;
+padding:10px;
+border:none;
+background:#22c55e;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+li{
+background:#334155;
+padding:10px;
+margin-top:5px;
+border-radius:6px;
+display:flex;
+justify-content:space-between;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>🚀 Productivity App</h2>
+
+<div class="tabs">
+<button onclick="show('todo')" class="active">Todo</button>
+<button onclick="show('habit')">Habit</button>
+<button onclick="show('timer')">Timer</button>
+</div>
+
+<!-- TODO -->
+<div id="todo" class="section" style="display:block">
+<h3>📋 Todo</h3>
+<input id="todoInput" placeholder="Task">
+<button class="action" onclick="addTodo()">Add</button>
+<ul id="todoList"></ul>
+</div>
+
+<!-- HABIT -->
+<div id="habit" class="section">
+<h3>🎯 Habit</h3>
+<input id="habitInput" placeholder="Habit">
+<button class="action" onclick="addHabit()">Add</button>
+<ul id="habitList"></ul>
+</div>
+
+<!-- TIMER -->
+<div id="timer" class="section">
+<h3>⏱️ Timer</h3>
+<div id="time">25:00</div>
+<button class="action" onclick="startTimer()">Start</button>
+</div>
+
+<script>
+
+/* NAV */
+function show(id){
+document.querySelectorAll(".section").forEach(s=>s.style.display="none")
+document.getElementById(id).style.display="block"
+}
+
+/* TODO */
+let todos = JSON.parse(localStorage.getItem("todos")) || []
+
+function renderTodo(){
+let list = document.getElementById("todoList")
+list.innerHTML=""
+todos.forEach((t,i)=>{
+let li=document.createElement("li")
+li.innerHTML=`${t} <span onclick="delTodo(${i})">❌</span>`
+list.appendChild(li)
+})
+localStorage.setItem("todos",JSON.stringify(todos))
+}
+
+function addTodo(){
+let val=document.getElementById("todoInput").value
+if(!val) return
+todos.push(val)
+document.getElementById("todoInput").value=""
+renderTodo()
+}
+
+function delTodo(i){
+todos.splice(i,1)
+renderTodo()
+}
+
+/* HABIT */
+let habits = JSON.parse(localStorage.getItem("habits")) || []
+
+function renderHabit(){
+let list=document.getElementById("habitList")
+list.innerHTML=""
+habits.forEach((h,i)=>{
+let li=document.createElement("li")
+li.innerHTML=`${h} <span onclick="delHabit(${i})">❌</span>`
+list.appendChild(li)
+})
+localStorage.setItem("habits",JSON.stringify(habits))
+}
+
+function addHabit(){
+let val=document.getElementById("habitInput").value
+if(!val) return
+habits.push(val)
+document.getElementById("habitInput").value=""
+renderHabit()
+}
+
+function delHabit(i){
+habits.splice(i,1)
+renderHabit()
+}
+
+/* TIMER */
+let seconds = 1500
+let timer
+
+function startTimer(){
+if(timer) return
+timer=setInterval(()=>{
+seconds--
+let m=Math.floor(seconds/60)
+let s=seconds%60
+document.getElementById("time").innerText=
+(m<10?"0"+m:m)+":"+(s<10?"0"+s:s)
+if(seconds<=0) clearInterval(timer)
+},1000)
+}
+
+renderTodo()
+renderHabit()
+
+</script>
+
+</body>
+</html>
